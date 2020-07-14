@@ -1,0 +1,7 @@
+.pytest_cache
+.idea
+__pycache__
+*.pyc
+checkpoints
+logs
+saved_models
