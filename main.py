@@ -197,9 +197,8 @@ if __name__ == "__main__":
                       steps_per_epoch=window,
                       validation_data=v_ds,
                       validation_steps= 20,
-                      callbacks=[validation_cb, tensorboard_cb, gb])
+                      callbacks=[validation_cb, tensorboard_cb])
     
-    state = v_ds.take(1)
+    state = v_ds.take(20)
     for x, y in state:
-        print(x, y)
-        print(ssm.predict(x))
+        print(ssm.predict(x), y)
