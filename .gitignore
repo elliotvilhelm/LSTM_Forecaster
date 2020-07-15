@@ -6,3 +6,4 @@ checkpoints
 logs
 saved_models
 data/
+discord_connector/secrets.py

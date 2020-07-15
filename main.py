@@ -30,8 +30,4 @@ if __name__ == "__main__":
                       validation_data=v_ds,
                       validation_steps= 20,
                       callbacks=[VALIDATION_CB, TENSORBOARD_CB])
-    
-    # validate
-    state = v_ds.take(20)
-    for x, y in state:
-        print(ssm.predict(x), y)
+
