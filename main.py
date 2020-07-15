@@ -3,6 +3,7 @@ import tensorflow as tf
 from datetime import datetime as dt
 import numpy as np
 
+from tensorflow.keras.layers import BatchNormalization
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -15,6 +16,36 @@ from config import BATCH_SIZE, BUFFER_SIZE, \
 
 register_matplotlib_converters()
 tf.random.set_seed(42)
+
+
+class GetWeights(tf.keras.callbacks.Callback):
+    # Keras callback which collects values of weights and biases at each epoch
+    def __init__(self):
+        super(GetWeights, self).__init__()
+        self.weight_dict = {}
+
+    def on_epoch_end(self, epoch, logs=None):
+        # this function runs at the end of each epoch
+
+        # loop over each layer and get weights and biases
+        for layer_i in range(len(self.model.layers)):
+            w = self.model.layers[layer_i].get_weights()[0]
+            b = self.model.layers[layer_i].get_weights()[1]
+            print('Layer %s has weights of shape %s and biases of shape %s' %(
+                layer_i, np.shape(w), np.shape(b)))
+            print(w)
+            # save all weights and biases inside a dictionary
+            if epoch == 0:
+                # create array to hold weights and biases
+                self.weight_dict['w_'+str(layer_i+1)] = w
+                self.weight_dict['b_'+str(layer_i+1)] = b
+            else:
+                # append new weights to previously-created weights array
+                self.weight_dict['w_'+str(layer_i+1)] = np.dstack(
+                    (self.weight_dict['w_'+str(layer_i+1)], w))
+                # append new weights to previously-created weights array
+                self.weight_dict['b_'+str(layer_i+1)] = np.dstack(
+                    (self.weight_dict['b_'+str(layer_i+1)], b)) 
 
 
 class EquityData:
@@ -99,18 +130,21 @@ def get_lstm():
     """
     shape = (HISTORY_SIZE, len(FEATURES))
     ssm = tf.keras.models.Sequential()
-    ssm.add(tf.keras.layers.LSTM(64, return_sequences=True,
+    ssm.add(tf.keras.layers.LSTM(32, return_sequences=True,
                                  input_shape=shape))
+    ssm.add(BatchNormalization())
 
-    ssm.add(tf.keras.layers.LSTM(32, return_sequences=True))
+    #ssm.add(tf.keras.layers.LSTM(32, return_sequences=True))
 
     ssm.add(tf.keras.layers.LSTM(16))
+    ssm.add(BatchNormalization())
 
     ssm.add(tf.keras.layers.Dense(8))
+    ssm.add(BatchNormalization())
 
     ssm.add(tf.keras.layers.Dense(1, activation='sigmoid'))
 
-    ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.1),
+    ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.01),
                 loss=tf.keras.losses.BinaryCrossentropy(),
                 metrics=['accuracy'])
     return ssm
@@ -152,7 +186,7 @@ if __name__ == "__main__":
     # tensorboard callback
     logdir = "logs/scalars/{}".format(dt.today())
     tensorboard_cb = tf.keras.callbacks.TensorBoard(log_dir=logdir)
-
+    gb = GetWeights()
     # get model
     ssm = get_lstm()
 
@@ -160,5 +194,10 @@ if __name__ == "__main__":
     history = ssm.fit(t_ds, epochs=EPOCHS,
                       steps_per_epoch=window,
                       validation_data=v_ds,
-                      validation_steps=50,
-                      callbacks=[validation_cb, tensorboard_cb])
+                      validation_steps= 20,
+                      callbacks=[validation_cb, tensorboard_cb, gb])
+    
+    state = v_ds.take(1)
+    for x, y in state:
+        print(x, y)
+        print(ssm.predict(x))
