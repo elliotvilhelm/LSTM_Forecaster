@@ -79,14 +79,7 @@ class EquityData:
         plt.plot(df)
         plt.show()
 
-def get_datasets():
-    e = EquityData(DATA_DIR, DATA_SYM)
-    # e.data['MA_long'] = e.data['Close'].rolling(window=52).mean()
-    e.data['MA_short'] = e.data['Close'].rolling(window=7).mean()
-
-    # evaluation interval
-    window = int(e.data.shape[0] / BATCH_SIZE)
-
+def get_datasets(e):
     # pick selected features
     e.data['Change_1'] = e.data['Close'] - e.data['Close'].shift(1)
     e.data['Change_4'] = e.data['Close'] - e.data['Close'].shift(4)
@@ -109,4 +102,4 @@ def get_datasets():
     v_ds = tf.data.Dataset.from_tensor_slices((xv, yv))
     v_ds = v_ds.batch(BATCH_SIZE).repeat()
     
-    return t_ds, v_ds, window
+    return t_ds, v_ds
