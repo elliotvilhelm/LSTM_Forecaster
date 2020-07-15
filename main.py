@@ -106,9 +106,9 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
 def split_multivariate(dataset, history_size, target_distance, step):
     train_split = int(len(dataset) * 0.7)
 
-    data_mean = dataset[:train_split].mean(axis=0)
-    data_std = dataset[:train_split].std(axis=0)
-    dataset = (dataset - data_mean) / data_std
+    # data_mean = dataset[:train_split].mean(axis=0)
+    # data_std = dataset[:train_split].std(axis=0)
+    # dataset = (dataset - data_mean) / data_std
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
                                                        train_split, history_size,
