@@ -2,6 +2,8 @@ import tensorflow as tf
 # import pyfinancialdata
 from datetime import datetime as dt
 import numpy as np
+from tensorflow.keras.layers import BatchNormalization
+
 
 from tensorflow.keras.layers import BatchNormalization
 import pandas as pd
@@ -95,7 +97,7 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
     for i in range(start_index, end_index):
         indices = range(i-history_size, i, step)
         data.append(dataset[indices])
-        if target[i] <= target[i+target_size]: # went up
+        if target[i] <= target[i+target_size]:  # went up
             labels.append(1)
         else:
             labels.append(0)
@@ -109,6 +111,7 @@ def split_multivariate(dataset, history_size, target_distance, step):
     data_mean = dataset[:train_split].mean(axis=0)
     data_std = dataset[:train_split].std(axis=0)
     dataset = (dataset - data_mean) / data_std
+    dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
                                                        train_split, history_size,
@@ -133,18 +136,12 @@ def get_lstm():
     ssm.add(tf.keras.layers.LSTM(32, return_sequences=True,
                                  input_shape=shape))
     ssm.add(BatchNormalization())
-
-    #ssm.add(tf.keras.layers.LSTM(32, return_sequences=True))
-
     ssm.add(tf.keras.layers.LSTM(16))
     ssm.add(BatchNormalization())
-
     ssm.add(tf.keras.layers.Dense(8))
-    ssm.add(BatchNormalization())
-
     ssm.add(tf.keras.layers.Dense(1, activation='sigmoid'))
 
-    ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.01),
+    ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),
                 loss=tf.keras.losses.BinaryCrossentropy(),
                 metrics=['accuracy'])
     return ssm
@@ -159,7 +156,12 @@ if __name__ == "__main__":
     window = int(e.data.shape[0] / BATCH_SIZE) * 1
 
     # pick selected features
-    e.data = e.data[8:]
+    e.data['Change_1'] = e.data['Close'] - e.data['Close'].shift(1)
+    e.data['Change_4'] = e.data['Close'] - e.data['Close'].shift(4)
+    e.data['Change_8'] = e.data['Close'] - e.data['Close'].shift(8)
+    e.data = e.data[10:]
+    import pdb
+    pdb.set_trace()
     features = e.data[FEATURES]
 
     dataset = features.values
