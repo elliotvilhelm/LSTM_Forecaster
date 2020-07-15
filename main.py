@@ -108,9 +108,9 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
 def split_multivariate(dataset, history_size, target_distance, step):
     train_split = int(len(dataset) * 0.7)
 
-    data_mean = dataset[:train_split].mean(axis=0)
-    data_std = dataset[:train_split].std(axis=0)
-    dataset = (dataset - data_mean) / data_std
+    # data_mean = dataset[:train_split].mean(axis=0)
+    # data_std = dataset[:train_split].std(axis=0)
+    # dataset = (dataset - data_mean) / data_std
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
@@ -196,9 +196,5 @@ if __name__ == "__main__":
     history = ssm.fit(t_ds, epochs=EPOCHS,
                       steps_per_epoch=window,
                       validation_data=v_ds,
-                      validation_steps= 20,
+                      validation_steps=20,
                       callbacks=[validation_cb, tensorboard_cb])
-    
-    state = v_ds.take(20)
-    for x, y in state:
-        print(ssm.predict(x), y)
