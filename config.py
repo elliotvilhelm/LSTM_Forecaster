@@ -5,5 +5,5 @@ STEP = 1
 HISTORY_SIZE = 4
 TARGET_DIS = 1
 FEATURES = ['Close', 'Volume', 'MA_short', 'Change_1', 'Change_4', 'Change_8']
-DATA_DIR = 'data/ROKU_2018_2020_1hr.csv'
-DATA_SYM = 'ROKU'
+DATA_DIR = 'data/SPY_2018_2020_1hr.csv'
+DATA_SYM = 'SPY'
