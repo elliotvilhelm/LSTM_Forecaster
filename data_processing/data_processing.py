@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from config import BATCH_SIZE, FEATURES, \
                    HISTORY_SIZE, TARGET_DIS, STEP, BUFFER_SIZE
+from market.Equity import EquityData
 
 
 def create_time_steps(length):
@@ -9,10 +10,10 @@ def create_time_steps(length):
 
 
 def multivariate_data(dataset, target, start_index, end_index, history_size,
-                      target_size, step):
+                      target_size, step, std_close):
     data = []
     labels = []
-    std_close = dataset[:, 0].std() / 10.0
+    # std_close = dataset[:, 0].std() / 10.0
 
     start_index = start_index + history_size
     if end_index is None:
@@ -41,19 +42,20 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
 
 
 def split_multivariate(dataset, history_size, target_distance, step):
-    train_split = int(len(dataset) * 0.7)
+    train_split = int(len(dataset) * 0.8)
 
     data_mean = dataset[:train_split].mean(axis=0)
     data_std = dataset[:train_split].std(axis=0)
     dataset = (dataset - data_mean) / data_std
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
+    std_close = dataset[:train_split].std(axis=0)[0] / 25.0
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
                                                        train_split, history_size,
-                                                       target_distance, step)
+                                                       target_distance, step, std_close)
     x_val_single, y_val_single = multivariate_data(dataset, dataset[:, 0],
                                                    train_split, None, history_size,
-                                                   target_distance, step)
+                                                   target_distance, step, std_close)
 
     return x_train_single, y_train_single, x_val_single, y_val_single
 
@@ -77,9 +79,10 @@ def get_datasets(e):
 
 def get_tfds(x_train, y_train, x_val, y_val):
     t_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
-    t_ds = t_ds.cache().shuffle(
-        BUFFER_SIZE).batch(BATCH_SIZE).repeat()
+    t_ds = t_ds.shuffle(
+        BUFFER_SIZE).cache().batch(BATCH_SIZE).repeat()
     v_ds = tf.data.Dataset.from_tensor_slices((x_val, y_val))
     v_ds = v_ds.batch(BATCH_SIZE).repeat()
 
     return t_ds, v_ds
+
