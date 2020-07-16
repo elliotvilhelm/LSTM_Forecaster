@@ -46,7 +46,6 @@ def split_multivariate(dataset, history_size, target_distance, step):
 
     data_mean = dataset[:train_split].mean(axis=0)
     data_std = dataset[:train_split].std(axis=0)
-    dataset = (dataset - data_mean) / data_std
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
     std_close = dataset[:train_split].std(axis=0)[0] / 25.0
 
