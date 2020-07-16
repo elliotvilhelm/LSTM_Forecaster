@@ -14,7 +14,7 @@ def get_lstm():
     ssm.add(BatchNormalization())
     ssm.add(tf.keras.layers.LSTM(16))
     ssm.add(BatchNormalization())
-    ssm.add(tf.keras.layers.Dense(16))
+    ssm.add(tf.keras.layers.Dense(32))
     ssm.add(tf.keras.layers.Dense(4, activation='softmax'))
 
     ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),

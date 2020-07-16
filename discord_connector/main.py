@@ -9,8 +9,9 @@ import tensorflow as tf
 
 
 interval = 5  # * 60 * 1
-tickers = ["INO"]
-time_frame = "1d"
+tickers = ["SPY", "ROKU", "QQQ", "MSFT", "NVDA"]
+tickers = ["NOC"]
+time_frame = "1h"
 red = 0xFF0000
 green = 0x008000
 
