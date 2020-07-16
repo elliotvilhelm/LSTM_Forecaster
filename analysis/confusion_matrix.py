@@ -3,8 +3,10 @@ import numpy as np
 import itertools
 import matplotlib.pyplot as plt
 
-
 def get_confusion_matrix(model, x, y):
+    """
+    obtain confusion matrix from multiclass model. 
+    """
     pred_l = []
     pred = model.predict(x)
     for p in pred:
@@ -16,7 +18,6 @@ def get_confusion_matrix(model, x, y):
     print(y_l.count(0), y_l.count(1), y_l.count(2), y_l.count(3))
     print(pred_l.count(0), pred_l.count(1), pred_l.count(2), pred_l.count(3))
     return tf.math.confusion_matrix(y_l, pred_l)
-
 
 def plot_confusion_matrix(cm, class_names):
     """
@@ -34,10 +35,8 @@ def plot_confusion_matrix(cm, class_names):
     plt.xticks(tick_marks, class_names, rotation=45)
     plt.yticks(tick_marks, class_names)
 
-    # Normalize the confusion matrix.
     cm = np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2)
 
-    # Use white text if squares are dark; otherwise black.
     threshold = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         color = "white" if cm[i, j] > threshold else "black"

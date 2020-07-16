@@ -9,15 +9,13 @@ def get_lstm():
     """
     shape = (HISTORY_SIZE, len(FEATURES))
     ssm = tf.keras.models.Sequential()
-    ssm.add(tf.keras.layers.LSTM(32, return_sequences=True,
+    ssm.add(tf.keras.layers.LSTM(64, return_sequences=True,
                                  input_shape=shape))
-    ssm.add(BatchNormalization())
-    ssm.add(tf.keras.layers.LSTM(16))
-    ssm.add(BatchNormalization())
-    ssm.add(tf.keras.layers.Dense(32))
+    ssm.add(tf.keras.layers.LSTM(32))
+    ssm.add(tf.keras.layers.Dense(16))
     ssm.add(tf.keras.layers.Dense(4, activation='softmax'))
 
-    ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),
+    ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.006),
                 loss=tf.keras.losses.CategoricalCrossentropy(),
                 metrics=['accuracy'])
     return ssm
