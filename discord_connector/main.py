@@ -4,13 +4,12 @@ from data_collection.yfinance_collector import get_ohlc
 from datetime import datetime
 import discord
 import asyncio
-from config import HISTORY_SIZE
+from config import HISTORY_SIZE, TICKERS
 import tensorflow as tf
 
 
 interval = 5  # * 60 * 1
-tickers = ["SPY", "ROKU", "QQQ", "MSFT", "NVDA"]
-tickers = ["NOC"]
+tickers = TICKERS
 time_frame = "1h"
 red = 0xFF0000
 green = 0x008000
