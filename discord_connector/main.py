@@ -8,11 +8,13 @@ from config import HISTORY_SIZE, TICKERS
 import tensorflow as tf
 
 
-interval = 5  # * 60 * 1
+interval = 60 * 15
 tickers = TICKERS
 time_frame = "1h"
 red = 0xFF0000
-green = 0x008000
+orange = 0xFFa378
+green = 0x21fc21
+grey = 0xe8fce8
 
 
 def get_single_sequence(df):
@@ -31,7 +33,7 @@ def get_single_sequence(df):
 
 async def stock_watch_job():
     p_map = {0: "UP > 1/10th STD", 1: "UP < 1/10th STD", 2: "DOWN > 1/10th STD", 3: "DOWN < 1/10th STD"}
-    c_map = {0: green, 1: green, 2: red, 3: red}
+    c_map = {0: green, 1: grey, 2: red, 3: orange}
     await client.wait_until_ready()
 
     while not client.is_closed():
@@ -58,7 +60,7 @@ async def stock_watch_job():
                 em1.set_footer(text="©2020 by LSTM SQUAD", icon_url="https://media1.giphy.com/media/CVtNe84hhYF9u/giphy.gif")
                 em1.set_thumbnail(url="https://media1.giphy.com/media/CVtNe84hhYF9u/giphy.gif")
                 await channel.send(embed=em1)
-            # await asyncio.sleep(interval)
+            await asyncio.sleep(interval)
         except Exception as e:
             print(f"Exception:{e}")
 
