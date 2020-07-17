@@ -2,7 +2,7 @@ BATCH_SIZE = 32
 BUFFER_SIZE = 10000
 EPOCHS = 200
 STEP = 1
-HISTORY_SIZE = 10
+HISTORY_SIZE = 4
 TARGET_DIS = 1
 FEATURES = ['Close', 'Volume', 'MA_short', 'Change_1', 'Change_4', 'Change_8']
 DATA_DIR = 'data/SPY_2018_2020_1hr.csv'
@@ -42,3 +42,4 @@ TICKERS = ["SPY",
            "INTC",
            "SPOT"
            ]
+# TICKERS = ["SPY"]

@@ -1,6 +1,6 @@
 from discord import Client
 
-CHANNEL_ID = 732851314228330537
+CHANNEL_ID = 733474632887173202
 
 client = Client()
 
