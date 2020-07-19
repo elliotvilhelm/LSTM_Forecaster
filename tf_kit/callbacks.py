@@ -8,12 +8,13 @@ from data_collection.yfinance_collector import get_multi_df
 from analysis.confusion_matrix import get_confusion_matrix, plot_confusion_matrix
 from config import TICKERS
 
+date = dt.now().strftime("%Y-%m-%d_%H:%M_%p")
 VALIDATION_CB = tf.keras.callbacks.ModelCheckpoint(
-    'checkpoints/multivariate_single_model', monitor='val_accuracy', verbose=1, save_best_only=True,
+    'checkpoints/{}'.format(date), monitor='val_accuracy', verbose=1, save_best_only=False,
     save_weights_only=False, mode='auto', save_freq='epoch'
 )
 
-ld = "logs/{}/".format(dt.today())
+ld = "logs/{}/".format(date)
 TENSORBOARD_CB = tf.keras.callbacks.TensorBoard(log_dir=ld + "scalar")
 
 class GetConfusion(tf.keras.callbacks.Callback):
@@ -29,7 +30,7 @@ class GetConfusion(tf.keras.callbacks.Callback):
         test_pred = np.argmax(test_pred_raw, axis=1)
         
         cm = get_confusion_matrix(self.model, self.x_val, self.y_val)
-        figure = plot_confusion_matrix(cm.numpy(), ["UP", "UP CHOP", "DOWN", "DOWN CHOP"])
+        figure = plot_confusion_matrix(cm.numpy(), ["UP", "NONE", "DOWN"])
             
         buf = io.BytesIO()
         
@@ -44,7 +45,6 @@ class GetConfusion(tf.keras.callbacks.Callback):
             
         with self.file_writer_cm.as_default():
             tf.summary.image("Confusion Matrix", cm_image, step=epoch)
-
 CONFUSION_CB = GetConfusion()
 
 class GetWeights(tf.keras.callbacks.Callback):
@@ -68,5 +68,4 @@ class GetWeights(tf.keras.callbacks.Callback):
                     (self.weight_dict['w_'+str(layer_i+1)], w))
                 self.weight_dict['b_'+str(layer_i+1)] = np.dstack(
                     (self.weight_dict['b_'+str(layer_i+1)], b)) 
-
 WEIGHTS_CB = GetWeights()

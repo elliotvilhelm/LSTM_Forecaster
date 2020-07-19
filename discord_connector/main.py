@@ -1,70 +1,87 @@
 from discord_connector.discord_connector import CHANNEL_ID, client
 from discord_connector.secrets import TOKEN
 from data_collection.yfinance_collector import get_ohlc
+from config import HISTORY_SIZE, TEST_TICKERS, TEST_MODEL, FEATURES
+
+from ta import add_all_ta_features
+from ta.utils import dropna
+
 from datetime import datetime
 import discord
 import asyncio
-from config import HISTORY_SIZE, TICKERS
 import tensorflow as tf
 
-
-interval = 60 * 15
-tickers = TICKERS
-time_frame = "1h"
-red = 0xFF0000
-orange = 0xFFa378
-green = 0x21fc21
-grey = 0xe8fce8
-
+INTERVAL = 3600
+TFRAME = "1h"
+RED = 0xFF0000
+GREEN = 0x21fc21
+GREY = 0xe8fce8
+P_MAP = {0: "UP", 1: "NOTHING", 2: "DOWN"}
+D_MAP = {0: "UP.", \
+         1: "CHOP.", \
+         2: "DOWN."}
+C_MAP = {0: GREEN, 1: GREY, 2: RED}
 
 def get_single_sequence(df):
-    df = df[['Close', 'Volume']]
-    df['MA_short'] = df['Close'].rolling(window=7).mean()
-    df['Change_1'] = df['Close'] - df['Close'].shift(1)
-    df['Change_4'] = df['Close'] - df['Close'].shift(4)
-    df['Change_8'] = df['Close'] - df['Close'].shift(8)
-    df = df[8:]
+    df = dropna(df)
+    df = add_all_ta_features(df, 
+                            open="Open", 
+                            high="High", 
+                            low="Low", 
+                            close="Close", 
+                            volume="Volume")
+    df = df[15:]
+    df = df[FEATURES]
     df = df.to_numpy()
     df = (df - df.min(axis=0)) / (df.max(axis=0) - df.min(axis=0))
     df = df[-HISTORY_SIZE:]
     df = df.reshape(1, df.shape[0], df.shape[1])
+    print(FEATURES)
+    print(df.squeeze())
     return df
+def build_embed(ticker, pred, close, std):
+    p_max = pred.argmax()
+    trend = P_MAP[p_max]
+    color = C_MAP[p_max]
+    t = datetime.now().strftime("%I:%M %p") + " PT"
 
+    e = discord.Embed(title=f'${ticker}', description=D_MAP[p_max], colour=color)
+    e.add_field(name="Current Price", value=f"${close}")
+    e.add_field(name="Time Frame", value=TFRAME)
+    e.add_field(name="Trend", value=trend)
+    e.add_field(name="Variation", value="{:.2f}".format(round(std, 2)))
+    e.add_field(name="Time", value=t)
+    e.add_field(name="Prediction", value="\n".join(["{} -> {:.2f}\n".format(P_MAP[i],round(p, 2)) for i, p in enumerate(pred)]))
+    e.set_footer(text="©2020 by LSTM SQUAD", icon_url="https://media1.giphy.com/media/CVtNe84hhYF9u/giphy.gif")
+    e.set_thumbnail(url="https://miro.medium.com/max/1400/1*rKWZiar6GfFh9jSAT9i62A.gif")
+    return e
 
 async def stock_watch_job():
-    p_map = {0: "UP > 1/10th STD", 1: "UP < 1/10th STD", 2: "DOWN > 1/10th STD", 3: "DOWN < 1/10th STD"}
-    c_map = {0: green, 1: grey, 2: red, 3: orange}
     await client.wait_until_ready()
-
-    while not client.is_closed():
+    while 1:
         try:
-            model = tf.keras.models.load_model('checkpoints/multivariate_single_model')
-            for ticker in tickers:
-                df = get_ohlc(ticker, period="1mo", interval=time_frame)
-                df_old = df
-                x = get_single_sequence(df)
+            # allows to train and test live at same time
+            with tf.device('/cpu:0'):
+                model = tf.keras.models.load_model(TEST_MODEL)
+                print('-' * 80)
+                for ticker in TEST_TICKERS:
+                    print("[{}]".format(ticker))
+                    df = get_ohlc(ticker, period="1mo", interval=TFRAME)
+                    df_old = df
+                    x = get_single_sequence(df)
 
-                channel = client.get_channel(CHANNEL_ID)
-                print("predicting")
-                prediction = model.predict(x=x)[0]
-                p_max = prediction.argmax()
-                trend = p_map[p_max]
-                color = c_map[p_max]
-                time = datetime.now().strftime("%I:%M %p") + " PT"
-                em1 = discord.Embed(title=f'${ticker}', description="LSTM Classification", colour=color)
-                em1.add_field(name="Current Price", value=f"${df_old['Close'][-1]}")
-                em1.add_field(name="Time Frame", value=time_frame)
-                em1.add_field(name="Trend", value=trend)
-                em1.add_field(name="Time", value=time)
-                em1.add_field(name="Prediction", value=str(prediction))
-                em1.set_footer(text="©2020 by LSTM SQUAD", icon_url="https://media1.giphy.com/media/CVtNe84hhYF9u/giphy.gif")
-                em1.set_thumbnail(url="https://media1.giphy.com/media/CVtNe84hhYF9u/giphy.gif")
-                await channel.send(embed=em1)
-            await asyncio.sleep(interval)
+                    pred = model.predict(x=x)[0]
+                    var = 0.02 * df_old['Close'].std()
+                    e = build_embed(ticker, pred, df_old['Close'][-1], var)
+
+                    channel = client.get_channel(CHANNEL_ID)
+                    print('-' * 80)
+
+                    await channel.send(embed=e)
         except Exception as e:
             print(f"Exception:{e}")
-
-        break
+            exit(1)
+        await asyncio.sleep(INTERVAL)
 
 client.loop.create_task(stock_watch_job())
 client.run(TOKEN)

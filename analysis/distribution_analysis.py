@@ -1,10 +1,9 @@
-from config import LABEL_UP, LABEL_DOWN, LABEL_UP_CHOP, LABEL_DOWN_CHOP
+from config import LABEL_UP, NONE, LABEL_DOWN
 
 def get_class_sum(y):
     up = y[y == LABEL_UP].sum()
-    up_chop = y[y == LABEL_UP_CHOP].sum()
+    none = y[y == NONE].sum()
     down = y[y == LABEL_DOWN].sum()
-    down_chop = y[y == LABEL_DOWN_CHOP].sum()
-    total = up + up_chop + down_chop + down_chop
-    return (up/total) * 100, (up_chop/total) * 100, \
-           (down/total) * 100, (down_chop/total) * 100
+    total = up + none + down
+    return (up/total) * 100, (none/total) * 100, \
+           (down/total) * 100

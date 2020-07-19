@@ -5,21 +5,26 @@ from datetime import datetime
 from data_collection.yfinance_collector import get_multi_df
 from analysis.distribution_analysis import get_class_sum
 from data_processing.data_processing import get_tfds
-from config import LABEL_UP, LABEL_UP_CHOP, LABEL_DOWN, LABEL_DOWN_CHOP, TICKERS
+from config import BATCH_SIZE, EPOCHS, TICKERS
 from tf_kit.callbacks import TENSORBOARD_CB, VALIDATION_CB, CONFUSION_CB
 from tf_kit.model import get_lstm
-from config import BATCH_SIZE, EPOCHS
 
 tf.random.set_seed(42)
 
 x_train, y_train, x_val, y_val = get_multi_df(TICKERS)
 
-print(get_class_sum(y_train))
+print("-" * 80)
+print("CLASS DISTRIBUTIONS:\n")
+print("UP\tNONE\tDOWN")
+print(["{:2}%".format(round(x ,2)) for x in get_class_sum(y_train)])
+print(["{:2}%".format(round(x ,2)) for x in get_class_sum(y_val)])
 print(get_class_sum(y_val))
-print(x_train.shape)
-print(y_train.shape)
-print(x_val.shape)
-print(y_val.shape)
+print("-" * 80)
+
+# print(x_train.shape)
+# print(y_train.shape)
+# print(x_val.shape)
+# print(y_val.shape)
 
 tfds_train, tfds_val = get_tfds(x_train, y_train, x_val, y_val)
 window = int(x_train.shape[0] / BATCH_SIZE)
@@ -33,5 +38,3 @@ history = ssm.fit(tfds_train, epochs=EPOCHS,
 
 for x, y in tfds_val.take(10):
     print(ssm.predict(x), y)
-
-
