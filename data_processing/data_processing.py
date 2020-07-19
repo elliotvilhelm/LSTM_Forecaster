@@ -63,7 +63,8 @@ def add_features(e):
                                  close="Close",
                                  volume="Volume")
 
-    e.data = e.data[20:]
+    # momentum_ao is limited by 33
+    e.data = e.data[33:]
     return e
 
 
