@@ -16,15 +16,15 @@ x_train, y_train, x_val, y_val = get_multi_df(TICKERS)
 print("-" * 80)
 print("CLASS DISTRIBUTIONS:\n")
 print("UP\tNONE\tDOWN")
-print(["{:2}%".format(round(x ,2)) for x in get_class_sum(y_train)])
-print(["{:2}%".format(round(x ,2)) for x in get_class_sum(y_val)])
+print(["{:2}%".format(round(x, 2)) for x in get_class_sum(y_train)])
+print(["{:2}%".format(round(x, 2)) for x in get_class_sum(y_val)])
 print(get_class_sum(y_val))
-print("-" * 80)
 
-# print(x_train.shape)
-# print(y_train.shape)
-# print(x_val.shape)
-# print(y_val.shape)
+print(f"X train: {x_train.shape}\n"
+      f"y train: {y_train.shape}\n"
+      f"X val: {x_val.shape}\n"
+      f"y val: {y_val.shape}")
+print("-" * 80)
 
 tfds_train, tfds_val = get_tfds(x_train, y_train, x_val, y_val)
 window = int(x_train.shape[0] / BATCH_SIZE)

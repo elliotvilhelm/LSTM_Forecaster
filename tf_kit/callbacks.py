@@ -8,14 +8,16 @@ from data_collection.yfinance_collector import get_multi_df
 from analysis.confusion_matrix import get_confusion_matrix, plot_confusion_matrix
 from config import TICKERS
 
-date = dt.now().strftime("%Y-%m-%d_%H:%M_%p")
+date = dt.now().strftime('%Y-%m-%d_%H:%M_%p')
 VALIDATION_CB = tf.keras.callbacks.ModelCheckpoint(
-    'checkpoints/{}'.format(date), monitor='val_accuracy', verbose=1, save_best_only=False,
+    filepath=f'checkpoints/{date}' + '_{epoch:03d}',
+    monitor='val_f1_score', verbose=1, save_best_only=False,
     save_weights_only=False, mode='auto', save_freq='epoch'
 )
 
-ld = "logs/{}/".format(date)
+ld = f"logs/{date}/"
 TENSORBOARD_CB = tf.keras.callbacks.TensorBoard(log_dir=ld + "scalar")
+
 
 class GetConfusion(tf.keras.callbacks.Callback):
     def __init__(self):

@@ -2,12 +2,13 @@ import numpy as np
 import tensorflow as tf
 from config import BATCH_SIZE, FEATURES, \
                    HISTORY_SIZE, TARGET_DIS, STEP, BUFFER_SIZE
-from market.Equity import EquityData
 from ta import add_all_ta_features
 from ta.utils import dropna
 
+
 def create_time_steps(length):
     return list(range(-length, 0))
+
 
 def multivariate_data(dataset, target, start_index, end_index, history_size,
                       target_size, step, std_close):
@@ -36,13 +37,12 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
             exit(1)
     return np.array(data), np.array(labels)
 
+
 def split_multivariate(dataset, history_size, target_distance, step):
     train_split = int(len(dataset) * 0.9)
 
-    data_mean = dataset[:train_split].mean(axis=0)
-    data_std = dataset[:train_split].std(axis=0)
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
-    std_close = dataset[:train_split].std(axis=0)[0] / 50.0
+    std_close = dataset[:train_split].std(axis=0)[0] / 75.0
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
                                                        train_split, history_size,
@@ -53,16 +53,18 @@ def split_multivariate(dataset, history_size, target_distance, step):
 
     return x_train_single, y_train_single, x_val_single, y_val_single
 
+
 def add_features(e):
     e.data = dropna(e.data)
     e.data = add_all_ta_features(e.data, 
                                  open="Open", 
                                  high="High", 
                                  low="Low", 
-                                 close="Close", 
+                                 close="Close",
                                  volume="Volume")
-    e.data = e.data[15:]
+    e.data = e.data[20:]
     return e
+
 
 def get_datasets(e):
     dataset = e.data[FEATURES].values
@@ -70,6 +72,7 @@ def get_datasets(e):
                               HISTORY_SIZE,
                               TARGET_DIS,
                               STEP)
+
 
 def get_tfds(x_train, y_train, x_val, y_val):
     t_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))

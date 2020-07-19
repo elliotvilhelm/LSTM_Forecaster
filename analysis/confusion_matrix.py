@@ -17,13 +17,13 @@ def get_confusion_matrix(model, x, y):
     for y in y:
         y_l.append(y.argmax())
 
-    rup_c = round(y_l.count(0) / len(y_l), 2)
-    rnone_c =  round(y_l.count(1) / len(y_l), 2)
-    rdown_c =  round(y_l.count(2) / len(y_l), 2) 
+    rup_c = round((y_l.count(0) / len(y_l)) * 100, 2)
+    rnone_c = round((y_l.count(1) / len(y_l)) * 100, 2)
+    rdown_c = round((y_l.count(2) / len(y_l)) * 100, 2)
 
-    pup_c = round(pred_l.count(0) / len(pred_l), 2)
-    pnone_c =  round(pred_l.count(1) / len(pred_l), 2)
-    pdown_c =  round(pred_l.count(2) / len(pred_l), 2)
+    pup_c = round((pred_l.count(0) / len(pred_l)) * 100, 2)
+    pnone_c = round((pred_l.count(1) / len(pred_l)) * 100, 2)
+    pdown_c = round((pred_l.count(2) / len(pred_l)) * 100, 2)
 
     print('-' * 80)
     print("[CONFUSION STATS]")
