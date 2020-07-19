@@ -23,14 +23,12 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
         indices = range(i-history_size, i, step)
         data.append(dataset[indices])
 
-        if target[i + target_size] > target[i] + std_close:
+        if target[i + target_size] > (target[i] + std_close):
             labels.append([1, 0, 0])
-        elif target[i + target_size] >= target[i] and target[i + target_size] < (target[i] + std_close):  # went up
+        elif target[i+target_size] <= (target[i] + std_close) or target[i+target_size] >= (target[i] - std_close):
             labels.append([0, 1, 0])
-        elif target[i + target_size] < target[i] - std_close:
+        elif target[i + target_size] < (target[i] - std_close):
             labels.append([0, 0, 1])
-        elif target[i + target_size] < target[i] and target[i + target_size] > (target[i] - std_close):
-            labels.append([0, 1, 0])
         else:
             print(target[i], target[i + target_size], std_close)
             print("Error labelling")
@@ -42,7 +40,7 @@ def split_multivariate(dataset, history_size, target_distance, step):
     train_split = int(len(dataset) * 0.9)
 
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
-    std_close = dataset[:train_split].std(axis=0)[0] / 75.0
+    std_close = dataset[:train_split].std(axis=0)[0] / 25.0
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
                                                        train_split, history_size,
@@ -63,8 +61,8 @@ def add_features(e):
                                  close="Close",
                                  volume="Volume")
 
-    # momentum_ao is limited by 33
-    e.data = e.data[33:]
+    # 43 for trend_trix
+    e.data = e.data[43:]
     return e
 
 

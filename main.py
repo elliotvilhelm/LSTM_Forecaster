@@ -18,8 +18,6 @@ print("CLASS DISTRIBUTIONS:\n")
 print("UP\tNONE\tDOWN")
 print(["{:2}%".format(round(x, 2)) for x in get_class_sum(y_train)])
 print(["{:2}%".format(round(x, 2)) for x in get_class_sum(y_val)])
-print(get_class_sum(y_val))
-
 print(f"X train: {x_train.shape}\n"
       f"y train: {y_train.shape}\n"
       f"X val: {x_val.shape}\n"
@@ -36,5 +34,5 @@ history = ssm.fit(tfds_train, epochs=EPOCHS,
                   validation_steps=int(y_val.shape[0]/BATCH_SIZE),
                   callbacks=[VALIDATION_CB, TENSORBOARD_CB, CONFUSION_CB])
 
-for x, y in tfds_val.take(10):
+for x, y in tfds_val.take(2):
     print(ssm.predict(x), y)

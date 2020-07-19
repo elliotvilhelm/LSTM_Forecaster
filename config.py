@@ -1,28 +1,37 @@
 BATCH_SIZE = 512
 BUFFER_SIZE = 10000
-EPOCHS = 250
+EPOCHS = 500
 STEP = 1
-HISTORY_SIZE = 4
-TARGET_DIS = 1
+HISTORY_SIZE = 32
+TARGET_DIS = 4
 
 # https://github.com/bukosabino/ta
-FEATURES = ['Close',
-            'Open',
-            'Volume',
-            'momentum_rsi',
-            'volume_adi',
-            'trend_adx_pos',
-            'trend_adx_neg',
-            'volume_sma_em',
-            'volume_vpt',
-            'volume_nvi',
-            'volume_vwap',
-            'momentum_stoch',
-            'momentum_mfi',
-            'momentum_kama',
-            'momentum_ao',
-            ]
-TEST_MODEL = 'checkpoints/2020-07-18_22:04_PM_002'
+FEATURES = [
+    'Close',
+    'Open',
+    'Volume',
+
+    'trend_adx_pos',
+    'trend_adx_neg',
+    'trend_trix',
+
+    'volume_adi',
+    'volume_cmf',
+    'volume_nvi',
+    'volume_sma_em',
+    'volume_vpt',
+    'volume_vwap',
+
+    'momentum_ao',
+    'momentum_kama',
+    'momentum_rsi',
+    'momentum_stoch',
+    'momentum_mfi',
+
+    'volatility_atr',
+]
+
+TEST_MODEL = 'checkpoints/2020-07-18_22:29_PM_106'
 
 N_CLASSES = 3
 LABEL_UP = [1, 0, 0]
@@ -46,13 +55,15 @@ TEST_TICKERS = ["SPY",
                 "IBM",
                 "GRUB",
                 "CAJ",
+                "ORCL",
                 "SIX",
                 "AUY",
                 "F",
                 "GE",
                 "XOM",
                 "MRO",
-                "MMM"
+                "MMM",
+                "WMT"
                 ]
 
 TICKERS = ["SPY",
@@ -72,6 +83,7 @@ TICKERS = ["SPY",
            "IBM",
            "GRUB",
            "CAJ",
+           "ORCL",
            "SIX",
            "AUY",
            "F",
@@ -84,5 +96,6 @@ TICKERS = ["SPY",
            "WBA",
            "LEJU",
            "ACB",
-           "DD"
+           "DD",
+           "WMT"
            ]

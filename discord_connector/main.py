@@ -35,7 +35,7 @@ def get_single_sequence(df):
                              low="Low",
                              close="Close",
                              volume="Volume")
-    df = df[15:]
+    df = df[35:]
     df = df[FEATURES]
     df = df.to_numpy()
     df = (df - df.min(axis=0)) / (df.max(axis=0) - df.min(axis=0))
