@@ -62,6 +62,7 @@ def add_features(e):
                                  low="Low", 
                                  close="Close",
                                  volume="Volume")
+
     e.data = e.data[20:]
     return e
 

@@ -1,11 +1,28 @@
-BATCH_SIZE = 1024
+BATCH_SIZE = 512
 BUFFER_SIZE = 10000
-EPOCHS = 200
+EPOCHS = 250
 STEP = 1
 HISTORY_SIZE = 4
 TARGET_DIS = 1
-FEATURES = ['Close', 'Open', 'Volume', 'momentum_rsi', 'volume_adi', 'trend_adx_pos', 'trend_adx_neg', 'volume_em', 'volume_sma_em', 'volume_vpt', 'volume_nvi', 'volume_vwap']
-TEST_MODEL = None
+
+# https://github.com/bukosabino/ta
+FEATURES = ['Close',
+            'Open',
+            'Volume',
+            'momentum_rsi',
+            'volume_adi',
+            'trend_adx_pos',
+            'trend_adx_neg',
+            'volume_sma_em',
+            'volume_vpt',
+            'volume_nvi',
+            'volume_vwap',
+            'momentum_stoch',
+            'momentum_mfi',
+            'momentum_kama',
+            'momentum_ao',
+            ]
+TEST_MODEL = 'checkpoints/2020-07-18_22:04_PM_002'
 
 N_CLASSES = 3
 LABEL_UP = [1, 0, 0]
@@ -37,6 +54,7 @@ TEST_TICKERS = ["SPY",
                 "MRO",
                 "MMM"
                 ]
+
 TICKERS = ["SPY",
            "QQQ",
            "ROKU",

@@ -1,9 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import itertools
+import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.use('Agg')
-import matplotlib.pyplot as plt
+
 
 def get_confusion_matrix(model, x, y):
     """
@@ -32,6 +33,7 @@ def get_confusion_matrix(model, x, y):
     print('-' * 80)
     
     return tf.math.confusion_matrix(y_l, pred_l)
+
 
 def plot_confusion_matrix(cm, class_names):
     """
