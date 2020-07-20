@@ -3,7 +3,24 @@ import numpy as np
 import itertools
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from config import N_CLASSES
 mpl.use('Agg')
+
+
+def log_class_distributions(y_l, pred_l):
+    y_class_distributions = []
+    p_class_distributions = []
+    for n in range(N_CLASSES):
+        y_class_distributions.append(round((y_l.count(n) / len(y_l)) * 100, 2))
+        p_class_distributions.append(round((pred_l.count(n) / len(y_l)) * 100, 2))
+
+    print('-' * 80)
+    print("[CONFUSION STATS]")
+    for n in range(N_CLASSES):
+        print(f"class_{n} y pct: {y_class_distributions[n]}%")
+    for n in range(N_CLASSES):
+        print(f"class_{n} prediction pct: {p_class_distributions[n]}%")
+    print('-' * 80)
 
 
 def get_confusion_matrix(model, x, y):
@@ -18,20 +35,8 @@ def get_confusion_matrix(model, x, y):
     for y in y:
         y_l.append(y.argmax())
 
-    rup_c = round((y_l.count(0) / len(y_l)) * 100, 2)
-    rnone_c = round((y_l.count(1) / len(y_l)) * 100, 2)
-    rdown_c = round((y_l.count(2) / len(y_l)) * 100, 2)
+    log_class_distributions(y_l, pred_l)
 
-    pup_c = round((pred_l.count(0) / len(pred_l)) * 100, 2)
-    pnone_c = round((pred_l.count(1) / len(pred_l)) * 100, 2)
-    pdown_c = round((pred_l.count(2) / len(pred_l)) * 100, 2)
-
-    print('-' * 80)
-    print("[CONFUSION STATS]")
-    print("REAL:\n\tUP: {:2}%\n\tNONE: {:2}%\n\tDOWN: {:2}%\n".format(rup_c, rnone_c, rdown_c))
-    print("PREDICTIONS:\n\tUP: {:2}%\n\tNONE: {:2}%\n\tDOWN: {:2}%".format(pup_c, pnone_c, pdown_c))
-    print('-' * 80)
-    
     return tf.math.confusion_matrix(y_l, pred_l)
 
 

@@ -47,7 +47,10 @@ class GetConfusion(tf.keras.callbacks.Callback):
             
         with self.file_writer_cm.as_default():
             tf.summary.image("Confusion Matrix", cm_image, step=epoch)
+
+
 CONFUSION_CB = GetConfusion()
+
 
 class GetWeights(tf.keras.callbacks.Callback):
     def __init__(self):
@@ -69,5 +72,7 @@ class GetWeights(tf.keras.callbacks.Callback):
                 self.weight_dict['w_'+str(layer_i+1)] = np.dstack(
                     (self.weight_dict['w_'+str(layer_i+1)], w))
                 self.weight_dict['b_'+str(layer_i+1)] = np.dstack(
-                    (self.weight_dict['b_'+str(layer_i+1)], b)) 
+                    (self.weight_dict['b_'+str(layer_i+1)], b))
+
+
 WEIGHTS_CB = GetWeights()

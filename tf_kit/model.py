@@ -1,5 +1,5 @@
 import tensorflow as tf
-from config import HISTORY_SIZE, FEATURES
+from config import HISTORY_SIZE, FEATURES, N_CLASSES
 from tensorflow.keras.layers import BatchNormalization, Dropout
 import tensorflow_addons as tfa
 
@@ -17,8 +17,8 @@ def get_lstm():
 
     ssm.add(tf.keras.layers.Dense(32))
     ssm.add(tf.keras.layers.Dense(16))
-    ssm.add(tf.keras.layers.Dense(3, activation='softmax'))
+    ssm.add(tf.keras.layers.Dense(N_CLASSES, activation='softmax'))
     ssm.compile(optimizer=tf.keras.optimizers.Adam(lr=0.003),
                 loss=tf.keras.losses.CategoricalCrossentropy(),
-                metrics=['accuracy', tfa.metrics.F1Score(num_classes=3)])
+                metrics=['accuracy', tfa.metrics.F1Score(num_classes=N_CLASSES)])
     return ssm

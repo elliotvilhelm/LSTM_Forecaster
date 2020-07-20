@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from config import BATCH_SIZE, FEATURES, \
-                   HISTORY_SIZE, TARGET_DIS, STEP, BUFFER_SIZE
+                   HISTORY_SIZE, TARGET_DIS, STEP, BUFFER_SIZE, STD_DENOMINATOR
 from ta import add_all_ta_features
 from ta.utils import dropna
 
@@ -25,7 +25,7 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
 
         if target[i + target_size] > (target[i] + std_close):
             labels.append([1, 0, 0])
-        elif target[i+target_size] <= (target[i] + std_close) or target[i+target_size] >= (target[i] - std_close):
+        elif target[i + target_size] <= (target[i] + std_close) and target[i+target_size] >= (target[i] - std_close):
             labels.append([0, 1, 0])
         elif target[i + target_size] < (target[i] - std_close):
             labels.append([0, 0, 1])
@@ -40,7 +40,7 @@ def split_multivariate(dataset, history_size, target_distance, step):
     train_split = int(len(dataset) * 0.9)
 
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
-    std_close = dataset[:train_split].std(axis=0)[0] / 25.0
+    std_close = dataset[:train_split].std(axis=0)[0] / STD_DENOMINATOR
 
     x_train_single, y_train_single = multivariate_data(dataset, dataset[:, 0], 0,
                                                        train_split, history_size,
