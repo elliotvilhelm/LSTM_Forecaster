@@ -5,14 +5,20 @@ from data_processing.data_processing import add_features
 from config import HISTORY_SIZE, FEATURES, N_CLASSES
 import numpy as np
 import time
+import os
 
 
 def download_data(tickers, interval="1h"):
+    
     for ticker in tickers:
-        df = yf.download(ticker, start="2018-08-15", end=None, interval="1h")
-        print(f"Downloading: {ticker}")
-        df.to_csv(f"data/{ticker}_2018_2020_1hr.csv")
-        time.sleep(1)
+        file_path = f"data/{ticker}_2018_2020_1hr.csv"
+        if not os.path.exists(file_path):
+            df = yf.download(ticker, start="2018-08-15", end=None, interval="1h")
+            print(f"Downloading: {ticker}")
+            df.to_csv(file_path)
+            time.sleep(1)
+        else:
+            print(f"{ticker} already downloaded.")
 
 
 def get_ohlc(ticker, period, interval):
