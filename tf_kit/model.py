@@ -10,10 +10,10 @@ def get_lstm():
     """
     shape = (HISTORY_SIZE, len(FEATURES))
     ssm = tf.keras.models.Sequential()
-    ssm.add(tf.keras.layers.LSTM(32, return_sequences=True,
+    ssm.add(tf.keras.layers.LSTM(8, return_sequences=False,
                                  input_shape=shape))
 
-    ssm.add(tf.keras.layers.LSTM(32))
+    # ssm.add(tf.keras.layers.LSTM(32))
 
     ssm.add(tf.keras.layers.Dense(32))
     ssm.add(tf.keras.layers.Dense(16))
