@@ -1,6 +1,6 @@
 import tensorflow as tf
 from data_collection.yfinance_collector import get_multi_df
-from analysis.distribution_analysis import get_class_sum
+from analysis.distribution_analysis import log_distributions
 from data_processing.data_processing import get_tfds
 from config import BATCH_SIZE, EPOCHS, TICKERS
 from tf_kit.callbacks import TENSORBOARD_CB, VALIDATION_CB, CONFUSION_CB
@@ -9,17 +9,7 @@ from tf_kit.model import get_lstm
 tf.random.set_seed(42)
 
 x_train, y_train, x_val, y_val = get_multi_df(TICKERS)
-
-print("-" * 80)
-print("CLASS DISTRIBUTIONS:\n")
-print("UP\tNONE\tDOWN")
-print(["{:2}%".format(round(x, 2)) for x in get_class_sum(y_train)])
-print(["{:2}%".format(round(x, 2)) for x in get_class_sum(y_val)])
-print(f"X train: {x_train.shape}\n"
-      f"y train: {y_train.shape}\n"
-      f"X val: {x_val.shape}\n"
-      f"y val: {y_val.shape}")
-print("-" * 80)
+log_distributions(x_train, y_train, x_val, y_val)
 
 tfds_train, tfds_val = get_tfds(x_train, y_train, x_val, y_val)
 window = int(x_train.shape[0] / BATCH_SIZE)

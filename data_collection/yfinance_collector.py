@@ -13,8 +13,8 @@ def download_data(tickers, interval="1h"):
     for ticker in tickers:
         file_path = f"data/{ticker}_2018_2020_1hr.csv"
         if not os.path.exists(file_path):
-            df = yf.download(ticker, start="2018-08-15", end=None, interval="1h")
             print(f"Downloading: {ticker}")
+            df = yf.download(ticker, start="2018-08-15", end=None, interval="1h")
             df.to_csv(file_path)
             time.sleep(1)
         else:

@@ -1,6 +1,6 @@
 BATCH_SIZE = 128
 BUFFER_SIZE = 10000
-EPOCHS = 50
+EPOCHS = 500
 STEP = 1
 HISTORY_SIZE = 24
 TARGET_DIS = 4
@@ -31,9 +31,9 @@ FEATURES = [
     'volatility_atr',
 ]
 
-TEST_MODEL = 'checkpoints/2020-07-18_22:29_PM_106'
+TEST_MODEL = 'checkpoints/2020-07-21_19:10_PM_141'
 
-STD_DENOMINATOR = 50.0
+STD_DENOMINATOR = 30.0
 
 N_CLASSES = 3
 BINARY_BULL_LABELS = ["UP", "DOWN"]
@@ -43,64 +43,78 @@ LABEL_UP = [1, 0, 0]
 NONE = [0, 1, 0]
 LABEL_DOWN = [0, 0, 1]
 
-TEST_TICKERS = ["SPY",
-                "QQQ",
-                "ROKU",
-                "MSFT",
-                "BA",
-                "AMZN",
-                "DDOG",
-                "OKTA",
-                "BABA",
-                "FB",
-                "INTC",
-                "NVDA",
-                "ADBE",
-                "FIT",
-                "IBM",
-                "GRUB",
-                "CAJ",
-                "ORCL",
-                "SIX",
-                "AUY",
-                "F",
-                "GE",
-                "XOM",
-                "MRO",
-                "MMM",
-                "WMT"
-                ]
+TEST_TICKERS = [
+    'AAL',
+    'AAPL',
+    'BA',
+    'BABA',
+    'CAJ',
+    'DDOG',
+    'F',
+    'FB',
+    'MSFT',
+    'NFLX',
+    'NVDA',
+    'OKTA',
+    'ROKU',
+    'SPY',
+    'TSLA',
+    'TWTR',
+]
 
-TICKERS = ["SPY",
-           "QQQ",
-           "ROKU",
-           "MSFT",
-           "BA",
-           "AMZN",
-           "DDOG",
-           "OKTA",
-           "BABA",
-           "FB",
-           "INTC",
-           "NVDA",
-           "ADBE",
-           "FIT",
-           "IBM",
-           "GRUB",
-           "CAJ",
-           "ORCL",
-           "SIX",
-           "AUY",
-           "F",
-           "GE",
-           "XOM",
-           "MRO",
-           "MMM",
-           "GPRO",
-           "KHC",
-           "WBA",
-           "LEJU",
-           "ACB",
-           "DD",
-           "WMT"
-           ]
+TICKERS = [
+    'A',
+    'AA',
+    'AACG',
+    'AAL',
+    'AAMC',
+    'AAME',
+    'AAN',
+    'AAOI',
+    'AAON',
+    'AAP',
+    'AAPL',
+    'AAT',
+    'ACB',
+    'ADBE',
+    'AMZN',
+    'AUY',
+    'BA',
+    'BABA',
+    'CAJ',
+    'DD',
+    'DDOG',
+    'EBAY',
+    'F',
+    'FB',
+    'FIT',
+    'GE',
+    'GPRO',
+    'GRUB',
+    'IBM',
+    'INTC',
+    'JPM',
+    'KHC',
+    'KO',
+    'LEJU',
+    'M',
+    'MMM',
+    'MRO',
+    'MSFT',
+    'NFLX',
+    'NVDA',
+    'OKTA',
+    'OMI',
+    'ORCL',
+    'QQQ',
+    'ROKU',
+    'SIX',
+    'SNAP',
+    'SPY',
+    'TWTR',
+    'UAL',
+    'WBA',
+    'WFC',
+    'WMT',
+    'XOM'
+]

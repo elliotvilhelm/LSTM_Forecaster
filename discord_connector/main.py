@@ -1,7 +1,7 @@
 from discord_connector.discord_connector import CHANNEL_ID, client
 from discord_connector.secrets import TOKEN
 from data_collection.yfinance_collector import get_ohlc
-from config import HISTORY_SIZE, TEST_TICKERS, TEST_MODEL, FEATURES
+from config import HISTORY_SIZE, TEST_TICKERS, TEST_MODEL, FEATURES, TARGET_DIS
 from tf_kit.model import get_lstm
 
 from ta import add_all_ta_features
@@ -20,10 +20,7 @@ TFRAME = "1h"
 RED = 0xFF0000
 GREEN = 0x21fc21
 GREY = 0xe8fce8
-P_MAP = {0: "UP", 1: "NOTHING", 2: "DOWN"}
-D_MAP = {0: "UP",
-         1: "CHOP",
-         2: "DOWN"}
+P_MAP = {0: "UP", 1: "CHOP", 2: "DOWN"}
 C_MAP = {0: GREEN, 1: GREY, 2: RED}
 
 
@@ -35,7 +32,7 @@ def get_single_sequence(df):
                              low="Low",
                              close="Close",
                              volume="Volume")
-    df = df[35:]
+    df = df[50:]
     df = df[FEATURES]
     df = df.to_numpy()
     df = (df - df.min(axis=0)) / (df.max(axis=0) - df.min(axis=0))
@@ -51,13 +48,15 @@ def build_embed(ticker, pred, close):
     trend = P_MAP[p_max]
     color = C_MAP[p_max]
     t = datetime.now().strftime("%I:%M %p") + " PT"
+    rounded_pred = list(map(lambda x: round(x, 2), pred))
 
-    e = discord.Embed(title=f'${ticker}', description=D_MAP[p_max], colour=color)
+    e = discord.Embed(title=f'${ticker}', colour=color)
     e.add_field(name="Current Price", value=f"${close}")
-    e.add_field(name="Time Frame", value=TFRAME)
+    e.add_field(name="Candle", value=TFRAME)
+    e.add_field(name="Target", value=str(TARGET_DIS) + " hr")
     e.add_field(name="Trend", value=trend)
     e.add_field(name="Time", value=t)
-    e.add_field(name="Prediction", value="\n".join(["{} -> {:.2f}\n".format(P_MAP[i],round(p, 2)) for i, p in enumerate(pred)]))
+    e.add_field(name="Prediction", value=str(rounded_pred))
     e.set_footer(text="©2020 by LSTM SQUAD", icon_url="https://media1.giphy.com/media/CVtNe84hhYF9u/giphy.gif")
     e.set_thumbnail(url="https://miro.medium.com/max/1400/1*rKWZiar6GfFh9jSAT9i62A.gif")
     return e
