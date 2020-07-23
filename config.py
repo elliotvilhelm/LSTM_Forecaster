@@ -1,8 +1,8 @@
-BATCH_SIZE = 128
+BATCH_SIZE = 512
 BUFFER_SIZE = 10000
 EPOCHS = 500
 STEP = 1
-HISTORY_SIZE = 24
+HISTORY_SIZE = 8
 TARGET_DIS = 4
 
 # https://github.com/bukosabino/ta
@@ -31,7 +31,7 @@ FEATURES = [
     'volatility_atr',
 ]
 
-TEST_MODEL = 'checkpoints/2020-07-21_19:10_PM_141'
+TEST_MODEL = 'checkpoints/2020-07-22_16:13_PM_465'
 
 STD_DENOMINATOR = 30.0
 
@@ -57,6 +57,7 @@ TEST_TICKERS = [
     'NVDA',
     'OKTA',
     'ROKU',
+    'SNAP',
     'SPY',
     'TSLA',
     'TWTR',
