@@ -11,6 +11,9 @@ import tensorflow as tf
 CHANNEL_ID = 733516071289487460
 client = Client()
 
+model = get_lstm()
+model.load_weights(TEST_MODEL)
+
 TFRAME = "1h"
 INTERVAL = 3600
 RED = 0xFF0000
@@ -70,13 +73,18 @@ async def on_message(message):
 
     content = message.content
     if content[0] == '~':
-        ticker = content[1:].upper()
-        df = get_ohlc(ticker, period="1mo", interval=TFRAME)
+        contents = content[1:].split(" ")
+        ticker = contents[0]
+        look_back = 0
+        if len(contents) > 1:
+            look_back = int(contents[1])
+        if look_back != 0:
+            df = get_ohlc(ticker, period="2y", interval=TFRAME)[:look_back]
+        else:
+            df = get_ohlc(ticker, period="2y", interval=TFRAME)
         df_old = df
         x = get_single_sequence(df)
         with tf.device('/cpu:0'):
-            model = get_lstm()
-            model.load_weights(TEST_MODEL)
             pred = model.predict(x=x)[0]
             e = build_embed(ticker, pred, df_old['Close'][-1])
         await message.channel.send(embed=e)
