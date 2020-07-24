@@ -4,13 +4,16 @@ import matplotlib.dates as mdates
 
 
 class EquityData:
-    def __init__(self, filename, symbol):
+    def __init__(self, filename=None, symbol=None):
         """
         filename: .csv file of OHLC values
         symbol: ticker
         """
         self.symbol = symbol
-        self.data = self.load_csv(filename)
+        if filename:
+            self.data = self.load_csv(filename)
+        else:
+            self.data = None
 
     def load_csv(self, filename):
         """

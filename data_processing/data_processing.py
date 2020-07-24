@@ -36,8 +36,8 @@ def multivariate_data(dataset, target, start_index, end_index, history_size,
     return np.array(data), np.array(labels)
 
 
-def split_multivariate(dataset, history_size, target_distance, step):
-    train_split = int(len(dataset) * 0.9)
+def split_multivariate(dataset, history_size, target_distance, step, train_split=0.9):
+    train_split = int(len(dataset) * train_split)
 
     dataset = (dataset - dataset.min(axis=0)) / (dataset.max(axis=0) - dataset.min(axis=0))
     std_close = dataset[:train_split].std(axis=0)[0] / STD_DENOMINATOR
