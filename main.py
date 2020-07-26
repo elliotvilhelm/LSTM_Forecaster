@@ -3,7 +3,7 @@ from data_collection.yfinance_collector import get_multi_df
 from analysis.distribution_analysis import log_distributions
 from data_processing.data_processing import get_tfds
 from config import BATCH_SIZE, EPOCHS, TICKERS
-from tf_kit.callbacks import TENSORBOARD_CB, VALIDATION_CB, CONFUSION_CB
+from tf_kit.callbacks import TENSORBOARD_CB, CONFUSION_CB
 from tf_kit.model import get_lstm
 
 tf.random.set_seed(42)
@@ -19,7 +19,7 @@ history = ssm.fit(tfds_train, epochs=EPOCHS,
                   steps_per_epoch=window,
                   validation_data=tfds_val,
                   validation_steps=int(y_val.shape[0]/BATCH_SIZE),
-                  callbacks=[VALIDATION_CB, TENSORBOARD_CB, CONFUSION_CB])
+                  callbacks=[TENSORBOARD_CB, CONFUSION_CB])
 
 for x, y in tfds_val.take(2):
     print(ssm.predict(x), y)
