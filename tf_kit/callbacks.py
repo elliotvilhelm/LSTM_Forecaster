@@ -32,7 +32,7 @@ class GetConfusion(tf.keras.callbacks.Callback):
         test_pred = np.argmax(test_pred_raw, axis=1)
         
         cm = get_confusion_matrix(self.model, self.x_val, self.y_val)
-        figure = plot_confusion_matrix(cm.numpy(), ["UP", "NONE", "DOWN"])
+        figure = plot_confusion_matrix(cm, ["UP", "NONE", "DOWN"])
             
         buf = io.BytesIO()
         

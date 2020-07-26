@@ -37,7 +37,13 @@ def get_confusion_matrix(model, x, y):
 
     log_class_distributions(y_l, pred_l)
 
-    return tf.math.confusion_matrix(y_l, pred_l)
+    cm = tf.math.confusion_matrix(y_l, pred_l)
+    cm = cm.numpy()
+    cm = np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2)
+    if cm[0].argmax() == 0 and cm[1].argmax() == 1 and cm[2].argmax() == 2:
+        with open("best_runs.txt", "w+") as f:
+            f.write(str(cm))
+    return cm
 
 
 def plot_confusion_matrix(cm, class_names):
@@ -55,8 +61,6 @@ def plot_confusion_matrix(cm, class_names):
     tick_marks = np.arange(len(class_names))
     plt.xticks(tick_marks, class_names, rotation=45)
     plt.yticks(tick_marks, class_names)
-
-    cm = np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2)
 
     threshold = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
