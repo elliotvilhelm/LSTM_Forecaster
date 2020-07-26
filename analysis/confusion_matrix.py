@@ -40,9 +40,7 @@ def get_confusion_matrix(model, x, y):
     cm = tf.math.confusion_matrix(y_l, pred_l)
     cm = cm.numpy()
     cm = np.around(cm.astype('float') / cm.sum(axis=1)[:, np.newaxis], decimals=2)
-    if cm[0].argmax() == 0 and cm[1].argmax() == 1 and cm[2].argmax() == 2:
-        with open("best_runs.txt", "w+") as f:
-            f.write(str(cm))
+
     return cm
 
 

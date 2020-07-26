@@ -9,11 +9,11 @@ from analysis.confusion_matrix import get_confusion_matrix, plot_confusion_matri
 from config import TICKERS
 
 date = dt.now().strftime('%Y-%m-%d_%H:%M_%p')
-VALIDATION_CB = tf.keras.callbacks.ModelCheckpoint(
-    filepath=f'checkpoints/{date}' + '_{epoch:03d}',
-    monitor='val_f1_score', verbose=1, save_best_only=False,
-    save_weights_only=True, mode='auto', save_freq='epoch'
-)
+# VALIDATION_CB = tf.keras.callbacks.ModelCheckpoint(
+#     filepath=f'checkpoints/{date}' + '_{epoch:03d}',
+#     monitor='val_f1_score', verbose=1, save_best_only=True,
+#     save_weights_only=False, mode='auto', save_freq='epoch'
+# )
 
 ld = f"logs/{date}/"
 TENSORBOARD_CB = tf.keras.callbacks.TensorBoard(log_dir=ld + "scalar")
@@ -28,26 +28,23 @@ class GetConfusion(tf.keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         test_pred_raw = self.model.predict(self.x_val)
-    
         test_pred = np.argmax(test_pred_raw, axis=1)
         
         cm = get_confusion_matrix(self.model, self.x_val, self.y_val)
-        figure = plot_confusion_matrix(cm, ["UP", "NONE", "DOWN"])
+        if cm[0].argmax() == 0 and cm[1].argmax() == 1 and cm[2].argmax() == 2:
+            self.model.save_weights('./checkpoints/{}/{}_{}'.format(date, date, epoch))
+            figure = plot_confusion_matrix(cm, ["UP", "NONE", "DOWN"])
             
-        buf = io.BytesIO()
-        
-        plt.savefig(buf, format='png')
-        
-        plt.close(figure)
-        buf.seek(0)
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png')
+            plt.close(figure)
+            buf.seek(0)
 
-        image = tf.image.decode_png(buf.getvalue(), channels=4)
-        
-        cm_image = tf.expand_dims(image, 0)
-            
-        with self.file_writer_cm.as_default():
-            tf.summary.image("Confusion Matrix", cm_image, step=epoch)
-
+            image = tf.image.decode_png(buf.getvalue(), channels=4)
+            cm_image = tf.expand_dims(image, 0)
+                
+            with self.file_writer_cm.as_default():
+                tf.summary.image("Confusion Matrix", cm_image, step=epoch)
 
 CONFUSION_CB = GetConfusion()
 
