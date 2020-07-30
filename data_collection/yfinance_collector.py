@@ -9,7 +9,6 @@ import os
 
 
 def download_data(tickers, interval="1h"):
-    
     for ticker in tickers:
         file_path = f"data/{ticker}_2018_2020_1hr.csv"
         if not os.path.exists(file_path):
@@ -23,7 +22,7 @@ def download_data(tickers, interval="1h"):
 
 def get_ohlc(ticker, period, interval):
     t = yf.Ticker(ticker)
-    print("history: {}\ninterval: {}".format(period, interval))
+    print(f"history: {period}\ninterval: {interval}")
     history = t.history(period=period, interval=interval)
     history = history[["Open", "High", "Low", "Close", "Volume"]]
     return history

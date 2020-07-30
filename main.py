@@ -20,6 +20,3 @@ history = ssm.fit(tfds_train, epochs=EPOCHS,
                   validation_data=tfds_val,
                   validation_steps=int(y_val.shape[0]/BATCH_SIZE),
                   callbacks=[VALIDATION_CB, TENSORBOARD_CB, CONFUSION_CB])
-
-for x, y in tfds_val.take(2):
-    print(ssm.predict(x), y)
