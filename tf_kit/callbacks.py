@@ -10,7 +10,7 @@ from config import TICKERS
 
 date = dt.now().strftime('%Y-%m-%d_%H:%M_%p')
 VALIDATION_CB = tf.keras.callbacks.ModelCheckpoint(
-    filepath=f'checkpoints/{date}' + '_{epoch:03d}',
+    filepath=f'checkpoints/{date}/' + '{epoch:03d}',
     monitor='val_f1_score', verbose=1, save_best_only=False,
     save_weights_only=True, mode='auto', save_freq='epoch'
 )

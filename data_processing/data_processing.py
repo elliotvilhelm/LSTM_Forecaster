@@ -60,7 +60,7 @@ def preprocess(ds, std_close, start, end):
 
 
 def train_test_split(ds):
-    train_split = int(len(ds) * 0.9)
+    train_split = int(len(ds) * 0.8)
 
     std_close = ds[:train_split].std(axis=0)[0] / STD_RATIO
     x_t, y_t = preprocess(ds, std_close, 0, train_split)
