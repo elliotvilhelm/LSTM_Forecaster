@@ -1,13 +1,13 @@
-BATCH_SIZE = 512
+BATCH_SIZE = 256
 BUFFER_SIZE = 10000
-EPOCHS = 500
+EPOCHS = 200
 STEP = 1
-HISTORY_SIZE = 8
-TARGET_DIS = 4
+HISTORY_SIZE = 7 * 4
+TARGET_DIS = 7 * 1
 # https://github.com/bukosabino/ta
 FEATURES = [
     'Close',
-    'Open',
+    # 'Open',
     'Volume',
 
     'trend_adx_pos',
@@ -18,21 +18,21 @@ FEATURES = [
     'volume_cmf',
     'volume_nvi',
     'volume_sma_em',
-    'volume_vpt',
+    # 'volume_vpt',
     'volume_vwap',
 
     'momentum_ao',
     'momentum_kama',
     'momentum_rsi',
-    'momentum_stoch',
-    'momentum_mfi',
+    # 'momentum_stoch',
+    # 'momentum_mfi',
 
     'volatility_atr',
 ]
 
 TEST_MODEL = 'checkpoints/2020-07-22_16:13_PM_465'
 
-STD_RATIO = 30.0
+STD_RATIO = 20.0
 
 N_CLASSES = 3
 BINARY_BULL_LABELS = ["UP", "DOWN"]
@@ -63,33 +63,33 @@ TEST_TICKERS = [
 ]
 
 TICKERS = [
-    'A',
-    'AA',
-    'AACG',
+    # 'A',
+    # 'AA',
+    # 'AACG',
     'AAL',
     'AAMC',
     'AAME',
-    'AAN',
-    'AAOI',
-    'AAON',
-    'AAP',
+    # 'AAN',
+    # 'AAOI',
+    # 'AAON',
+    # 'AAP',
     'AAPL',
-    'AAT',
+    # 'AAT',
     'ACB',
     'ADBE',
     'AMD',
     'AMZN',
-    'AUY',
+    # 'AUY',
     'BA',
     'BABA',
-    'CAJ',
-    'DD',
+    # 'CAJ',
+    # 'DD',
     'DDOG',
     'EBAY',
     'F',
     'FB',
     'FIT',
-    'GE',
+    # 'GE',
     'GPRO',
     'GRUB',
     'IBM',
@@ -100,21 +100,21 @@ TICKERS = [
     'LEJU',
     'M',
     'MMM',
-    'MRO',
+    # 'MRO',
     'MSFT',
-    'NFLX',
+    # 'NFLX',
     'NVDA',
     'OKTA',
-    'OMI',
+    # 'OMI',
     'ORCL',
     'QQQ',
     'ROKU',
-    'SIX',
+    # 'SIX',
     'SNAP',
     'SPY',
     'TWTR',
-    'UAL',
-    'WBA',
+    # 'UAL',
+    # 'WBA',
     'WFC',
     'WMT',
     'XOM'
