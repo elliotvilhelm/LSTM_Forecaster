@@ -10,7 +10,7 @@ from config import TICKERS
 
 date = dt.now().strftime('%Y-%m-%d_%H:%M_%p')
 VALIDATION_CB = tf.keras.callbacks.ModelCheckpoint(
-    filepath=f'checkpoints/{date}' + '_{epoch:03d}',
+    filepath=f'checkpoints/{date}/' + '{epoch:03d}',
     monitor='val_f1_score', verbose=1, save_best_only=False,
     save_weights_only=True, mode='auto', save_freq='epoch'
 )
@@ -20,9 +20,10 @@ TENSORBOARD_CB = tf.keras.callbacks.TensorBoard(log_dir=ld + "scalar")
 
 
 class GetConfusion(tf.keras.callbacks.Callback):
-    def __init__(self):
+    def __init__(self, x_val, y_val):
         super(GetConfusion, self).__init__()
-        _, _, self.x_val, self.y_val = get_multi_df(TICKERS)
+        self.x_val = x_val
+        self.y_val = y_val
         ld_cm = ld + "image"
         self.file_writer_cm = tf.summary.create_file_writer(ld_cm)
 
@@ -47,9 +48,6 @@ class GetConfusion(tf.keras.callbacks.Callback):
             
         with self.file_writer_cm.as_default():
             tf.summary.image("Confusion Matrix", cm_image, step=epoch)
-
-
-CONFUSION_CB = GetConfusion()
 
 
 class GetWeights(tf.keras.callbacks.Callback):

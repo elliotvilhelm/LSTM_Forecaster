@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from ta import add_all_ta_features
 from ta.utils import dropna
+import numpy
 
 
 from trading.strategy import ThreeClassPrediction
@@ -9,9 +10,32 @@ from analysis.distribution_analysis import log_distributions
 from config import BATCH_SIZE, FEATURES, \
                    HISTORY_SIZE, TARGET_DIS, \
                    STEP, BUFFER_SIZE, STD_RATIO
+import pandas as pd
+
 
 def create_time_steps(length):
     return list(range(-length, 0))
+
+
+def down_sample_three_class_data(x, y):
+    y_df = pd.DataFrame(y.argmax(axis=1), columns=['label'])
+    y_min_count = y_df['label'].value_counts().min()
+    up_indicies = y_df[y_df['label'] == 0].index.values
+    chop_indicies = y_df[y_df['label'] == 1].index.values
+    down_indicies = y_df[y_df['label'] == 2].index.values
+    up_indicies = np.random.choice(up_indicies, y_min_count)
+    chop_indicies = np.random.choice(chop_indicies, y_min_count)
+    down_indicies = np.random.choice(down_indicies, y_min_count)
+    up_x = np.take(x, up_indicies, axis=0)
+    chop_x = np.take(x, chop_indicies, axis=0)
+    down_x = np.take(x, down_indicies, axis=0)
+    up_y = np.take(y, up_indicies, axis=0)
+    chop_y = np.take(y, chop_indicies, axis=0)
+    down_y = np.take(y, down_indicies, axis=0)
+    x = np.concatenate((up_x, chop_x, down_x))
+    y = np.concatenate((up_y, chop_y, down_y))
+    return x, y
+
 
 def preprocess(ds, std_close, start, end):
     data = []
@@ -19,11 +43,16 @@ def preprocess(ds, std_close, start, end):
     if end is None:
         end = len(ds) - TARGET_DIS
 
-    # build lstm tensor
     for i in range(start, end):
         indices = range(i-HISTORY_SIZE, i, STEP)
-        data.append(ds[indices])
-    
+        sequence = ds[indices]
+        normalized_sequence = (sequence / sequence[0]) - 1
+        data.append(normalized_sequence)
+        if numpy.isnan(normalized_sequence).any():
+            print(sequence)
+            print(normalized_sequence)
+            exit(1)
+
     s = ThreeClassPrediction(ds, std_close)
     labels = s.add_labels(start, end)
     
@@ -31,11 +60,9 @@ def preprocess(ds, std_close, start, end):
 
 
 def train_test_split(ds):
-    train_split = int(len(ds) * 0.9)
+    train_split = int(len(ds) * 0.8)
 
-    ds = (ds - ds.min(axis=0)) / (ds.max(axis=0) - ds.min(axis=0))
     std_close = ds[:train_split].std(axis=0)[0] / STD_RATIO
-
     x_t, y_t = preprocess(ds, std_close, 0, train_split)
     x_v, y_v = preprocess(ds, std_close, train_split, None)
     return x_t, y_t, x_v, y_v
